@@ -1,0 +1,27 @@
+<div>
+    <!--Title bar-->
+    <div  ng-click="showHide()" class="objective_title hand_cursor">
+        &nbsp;<span class="glyphicon glyphicon-pause" />
+        Breaks  <span class="gray_badge" ng-show="breaks.length>0">{{breaks.length}}</span>
+    </div>
+    <!--Progress bar - showing time spent in the break-->
+    <div ng-show="isCurrentBreakActive()" class="progress" style="height:3px; margin:0px;">
+        <div class="progress-bar" ng-class="{'progress-bar-success':getCurrentPercentage()<80, 'progress-bar-warning': getCurrentPercentage()>=80 &&getCurrentPercentage()<100, 'progress-bar-danger': getCurrentPercentage()>=100}" role="progressbar" aria-valuenow="{{getCurrentPercentage()}}" aria-valuemin="0"
+            aria-valuemax="100" style="width:{{getCurrentPercentage()}}%">
+        </div>
+    </div>
+    <!--Break details-->
+    <div ng-show="visible">
+        <!--Looping through the breaks-->
+        <div ng-repeat="break in breaks">
+           <span class="light_gray_badge">{{$index+1}}</span> Time spent {{formatDuration(break.timeSpent)}}  ({{getPercentage(break)}}%); Time planned {{formatDuration(break.timePlanned)}}
+            <div class="progress" style="height:3px; margin:0px;">
+                <div class="progress-bar" ng-class="{'progress-bar-success':getPercentage(break)<80, 'progress-bar-warning': getPercentage(break)>=80 && getPercentage(break)<100, 'progress-bar-danger': getPercentage(break)>=100}" role="progressbar" aria-valuenow="{{getPercentage(break)}}" aria-valuemin="0" aria-valuemax="100"
+                    style="width:{{getPercentage(break)}}%">
+                </div>
+            </div>
+            <input ng-model="break.comment" class="text_editor" type="text" placeholder="Break Reason" />
+        </div>
+
+    </div>
+</div>

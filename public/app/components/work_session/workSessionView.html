@@ -1,0 +1,174 @@
+<div>
+    <div>
+        <!--Control bar -->
+        <div class="row row-centered">
+            <div>
+                <span class="big_title">{{workSession.workSessionCategory}} / {{workSession.workSessionName}}</span>
+                <span data-toggle="modal" ng-click="startConfig()" data-target="#workSessionConfig" title="Settings" class="glyphicon glyphicon-th-list config_icon" />
+                &nbsp;<span data-toggle="modal" ng-click="toggleSound()" title="{{getTextSoundIcon()}}" class="glyphicon" ng-class="{'glyphicon-volume-up':isSoundActive(), 'glyphicon-volume-off':!isSoundActive()}" style="cursor: pointer; cursor: hand" />
+                <div class="progress" style="height:3px; margin-top:5px;  margin-bottom:5px">
+                    <div class="progress-bar" ng-class="{'progress-bar-success':getPercentage(workSession)<80, 'progress-bar-warning': getPercentage(workSession)>=80 && getPercentage(workSession)<100, 'progress-bar-danger': getPercentage(workSession)>=100}"
+                        role="progressbar" aria-valuenow="{{getPercentage(workSession)}}" aria-valuemin="0" aria-valuemax="100" style="width:{{getPercentage(workSession)}}%">
+                    </div>
+                </div>
+            </div>
+
+            <button ng-click="startWork()" ng-show="workSession.status=='stopped'" class="btn btn-success"><span class="glyphicon glyphicon-play"></span> START WORK</button>
+            <button ng-click="startBreak()" ng-show="workSession.status=='work' || workSession.status=='reflection' || workSession.status=='catch_up'"
+                class="btn btn-warning"><span class="glyphicon glyphicon-pause"></span> TAKE A BREAK</button>
+            <button ng-click="startInterruption()" ng-show="workSession.status=='work' || workSession.status=='reflection' || workSession.status=='catch_up'"
+                class="btn btn-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> INTERRUPTION</button>
+            <button ng-click="backToWork()" ng-show="workSession.status=='interruption' || workSession.status=='break'" class="btn btn-success"><span class="glyphicon glyphicon-share-alt"></span> GET BACK TO WORK</button>
+            <button ng-click="stopWork()" ng-show="workSession.status!='stopped'" class="btn btn-primary"><span class="glyphicon glyphicon-stop"></span> END WORK SESSION</button>
+        </div>
+
+        <!--Status box -->
+        <div class="status_box row" style="margin-top: 5px">
+            <div class="status_current_box ">Status: <b>{{workSession.status}}</b>
+            </div>
+            <div class="col-xs-6">
+                <div class="col-xs-6">
+                    <span ng-show="workSession.status=='work'">Time in TS:</span>
+                    <span ng-show="workSession.status=='break'">Time in break:</span>
+                    <span ng-show="workSession.status=='interruption'">Time interruption:</span>
+                    <span ng-show="workSession.status=='reflection'">Time reflection:</span>
+                    <span ng-show="workSession.status=='catch_up'">Remaining catch up:</span>
+                </div>
+                <div class="col-xs-6">
+                    <span ng-show="workSession.status=='work'"><b>{{formatDuration(workSession.timeSpentCurrentTimeSlot, true)}}</b></span>
+                    <span ng-show="workSession.status=='break'"><b>{{formatDuration(workSession.timeSpentCurrentBreak, true)}}</b></span>
+                    <span ng-show="workSession.status=='interruption'"><b>{{formatDuration(workSession.timeSpentCurrentInterruption, true)}}</b></span>
+                    <span ng-show="workSession.status=='reflection'"><b>{{formatDuration(workSession.timeSpentCurrentReflection, true)}}</b></span>
+                    <span ng-show="workSession.status=='catch_up'"><b>{{formatDuration(workSession.remainingCatchUpTime, true)}}</b></span>
+                </div>
+
+                <div class="col-xs-6">Total work time:</div>
+                <div class="col-xs-6"><b>{{formatDuration(workSession.totalWorkTime)}}</b></div>
+
+                <div class="col-xs-6">Total reflection time:</div>
+                <div class="col-xs-6"><b>{{formatDuration(workSession.totalReflectionTime)}}</b></div>
+            </div>
+            <div class="col-xs-6">
+                <div class="col-xs-6">Total break time:</div>
+                <div class="col-xs-6"><b>{{formatDuration(workSession.totalBreakTime)}}</b></div>
+
+                <div class="col-xs-6">Total interruption time:</div>
+                <div class="col-xs-6"><b>{{formatDuration(workSession.totalInterruptionTime)}}</b></div>
+
+                <div class="col-xs-6">Total catch up time:</div>
+                <div class="col-xs-6"><b>{{formatDuration(workSession.totalCatchUpTime)}}</b></div>
+            </div>
+            <div class="status_current_box col-xs-12">Total time in work session: <b>{{formatDuration(getTotalTimeInWorkSession())}}</b></div>
+        </div>
+    </div>
+
+    <div class="row" style="padding: 15px;">
+        <!--Break config box - displayed when status = 'block'-->
+        <div ng-show="workSession.status=='break'" class="break_interruption_box col-xs-12">
+            <div>
+                Planned duration of break
+                <duration-widget duration="getGetLastBreakRecord().timePlanned" />
+            </div>
+            <input class="text_editor" ng-model="getGetLastBreakRecord().comment" placeholder="Reason for break" />
+        </div>
+        <!--Interruption config box - displayed when status = 'interruption'-->
+        <div ng-show="workSession.status=='interruption'" class="break_interruption_box col-xs-12">
+            <input class="text_editor" ng-model="getGetLastInterruptionRecord().comment" placeholder="Reason for interruption" />
+        </div>
+
+        <!-- Work Session Timeline -->
+        <div class="worksession_timeline col-xs-8">
+            <!-- Looping through time blocks in workSession -->
+            <div ng-repeat="timeBlock in workSession.timeBlocks | reverse" class="time_bloc col-xs-12">
+                <!-- Looping through time slots in the current timeBlock -->
+                <div ng-repeat="timeSlot in timeBlock.timeSlots | reverse">
+                    <h4> {{timeBlock.idTimeBlock}}.{{numberToLetter(timeSlot.idTimeSlot)}}</h4>
+                    <div >
+                        <!-- List of done items -->
+                        <div class="col-xs-1">Done:</div>
+                        <div class="col-xs-11">
+
+                            <div ng-repeat="item in timeSlot.done">
+                                <div class="col-xs-11">
+                                    <input class="text_editor width_115_perc" enter-pressed="addDoneItem(timeSlot)" shift-delete-pressed="deleteDoneItem(timeSlot,$index)" ng-model="item.text"
+                                    />
+                                </div>
+                                <div class="col-xs-1">
+                                    <a ng-show="timeSlot.done.length>1" ng-click="deleteDoneItem(timeSlot,$index)" class="delete_icon" title="Delete [Shift+Del]">&times;</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- List of comments -->
+                        <div class="col-xs-1">Comment:</div>
+                        <div class="col-xs-11">
+                            <div ng-repeat="item in timeSlot.comment">
+                                <div class="col-xs-11">
+                                    <input class="text_editor width_115_perc" enter-pressed="addCommentItem(timeSlot)" shift-delete-pressed="deleteCommentItem(timeSlot,$index)"
+                                        ng-model="item.text" />
+                                </div>
+                                <div class="col-xs-1">
+                                    <a ng-show="timeSlot.comment.length>1" ng-click="deleteCommentItem(timeSlot,$index)" class="delete_icon" title="Delete [Shift+Del]">&times;</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- List of next items -->
+                        <div class="col-xs-1">Next:</div>
+                        <div class="col-xs-11">
+                            <div ng-repeat="item in timeSlot.next">
+                                <div class="col-xs-11">
+                                    <input class="text_editor width_115_perc" enter-pressed="addNextItem(timeSlot)" shift-delete-pressed="deleteNextItem(timeSlot,$index)"  ng-model="item.text" 
+                                    />
+                                </div>
+                                <div class="col-xs-1">
+                                    <a ng-show="timeSlot.next.length>1" ng-click="deleteNextItem(timeSlot,$index)" class="delete_icon" title="Delete [Shift+Del]">&times;</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Right navigation-->
+        <div class="objectives_timeline ">
+            <!--Breaks widget-->
+            <div>
+                <breaks-widget breaks="workSession.breaks" />
+            </div>
+            <!--Interruptions widget-->
+            <div>
+                <interruptions-widget interruptions="workSession.interruptions" />
+            </div>
+            <!--'New objective' button-->
+            <button ng-click="addObjective(workSession)" class="btn btn-default new_objective_button">
+                New Objective <span class="glyphicon glyphicon-road" />
+            </button>
+            <!-- Looping through objectives -->
+            <div ng-repeat="objective in workSession.objectives">
+                <objective-widget objective="objective" on-delete-objective="deleteObjective(workSession,$index)" index="$index" />
+            </div>
+        </div>
+    </div>
+
+    <!--Modal containing config-->
+    <div id="workSessionConfig" class="modal fade modal_config" role="dialog">
+        <div class="panel panel-default">
+            <div class="panel-heading center_align"><span class="glyphicon glyphicon-th-list"></span> <b>Work session configuration</b></div>
+            <div class="panel-body">
+                <worksession-config work-session="copyWorkSession" />
+            </div>
+            <div class="panel-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        CANCEL</button>
+                <button type="button" ng-click="applyConfig()" class="btn btn-primary" data-dismiss="modal">APPLY 
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,39 @@
+<div>
+    <!--Title bar-->
+    <div class="objective_title {{getObjectiveForeColor()}}" data-toggle="collapse" data-target="#objective{{index}}">
+        &nbsp;
+        <input ng-model="objective.completed" ng-click="doneClick()" title="Done ?" type="checkbox" /> 
+        <span class="hand_cursor" ng-click="showHide()">Objective {{index+1}}</span>
+        | <input type="checkbox" ng-model="objective.workingOnThis" ng-click="workingOnThisClick()" /> Working on this
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a ng-click="_deleteObjective()" class="delete_objective" title="Delete">&times;</a>
+        <div class="progress" style="height:3px; margin:0px;">
+            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{getPercentageWorkDone()}}" aria-valuemin="0"
+                aria-valuemax="100" style="width:{{getPercentageWorkDone()}}%">
+            </div>
+        </div>
+    </div>
+    <!--Details-->
+    <div ng-show="visible" id="#objective{{index}}">
+        <!--Input containing the objective description-->
+        <input type="text" class="text_editor objective_text" ng-model="objective.objective" />
+        <!--Input containing the planned time for the objective-->
+        <div>
+            <div class="div_40_perc">&nbsp; Planned time:</div>
+            <div class="div_50_perc">
+                <duration-widget duration="objective.plannedTime" />
+            </div>
+        </div>
+        <!--Display the time spent in the current objective-->
+        <div>
+            <div class="div_40_perc">&nbsp; Time spent: </div>
+            <div class="div_50_perc"><b>{{formatDuration(objective.timeSpent)}} <span ng-class="{'red_foreground': getPercentageWorkDone()>100}"> ({{getPercentageWorkDone()}} %)</span></b></div>
+        </div>
+        <!--List of comments-->
+        <div>
+            <!--Looping through comments-->
+            <input ng-repeat="comment in objective.comments" ng-model="comment.text" enter-pressed="addNewComment()" shift-delete-pressed="deleteComment($index)"
+                type="text" class="text_editor objective_comment" placeholder=" Add comments here" title="[Enter] to add new; [Shift+Del] to delete"
+            />
+        </div>
+    </div>
+</div>

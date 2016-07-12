@@ -1,0 +1,85 @@
+<div class="config_box">
+  <!-- Worksession category and name -->
+  <div class="center_align">
+    <div class="div_40_perc">
+      <input ng-model="workSession.workSessionCategory"  class="text_editor big_title right_align" placeholder="Category" />
+    </div>
+    <div class="div_5_perc center_align big_title">
+      /
+    </div>
+    <div class="div_40_perc">
+      <input ng-model="workSession.workSessionName"  class="text_editor big_title" placeholder="Session Name" />
+    </div>
+  </div>
+
+  <!-- Duration -->
+  <div class="div_30_perc">
+    Duration
+  </div>
+  <div class="div_60_perc">
+    <div><duration-widget duration="workSession.plannedWorkTime" /></div>
+  </div>
+
+  <hr>
+  <!-- Time Slots per Block -->
+  <div class="div_30_perc">
+    Time Slot configuration
+  </div>
+  <div class="div_70_perc">
+    <div class="div_100_perc inline_block">
+      <select ng-model="workSession.timeSlotConfig" class="text_editor" ng-change="changeTimeSlotConfig()" >
+         <option ng:repeat="tsConfig in defaultTimeSlotConfigs" value="{{$index}}">{{tsConfig.alias}}</option>
+      </select>
+    </div>
+  </div>
+  
+  <!-- Time Slots per Block -->
+  <div ng-show="workSession.timeSlotConfig=='4'">
+    <div class="div_30_perc">
+      Time Slots per Block
+    </div>
+    <div class="div_60_perc">
+      <div class="div_30_perc inline_block">
+        <input ng-model="workSession.numberOfTimeSlotsByBlock" type="number" class="text_editor" />
+      </div>
+    </div>
+
+    <!-- Duration Time Slot -->
+    <div class="div_30_perc">
+      Duration Time Slot
+    </div>
+    <div class="div_60_perc">
+      <div class="div_30_perc inline_block">
+        <div><duration-widget duration="workSession.durationTimeSlot" /></div>
+        <!--<input ng-model="workSession.durationTimeSlot" type="number" class="text_editor" />-->
+      </div>
+    </div>
+
+    <!-- Duration reflection -->
+    <div class="div_30_perc">
+      Duration Reflection
+    </div>
+    <div class="div_60_perc">
+      <div class="div_30_perc inline_block">
+        <div><duration-widget duration="workSession.durationReflection" /></div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <!-- Time Slots per Block -->
+  <table>
+    <tr>
+      <td class="right_separator center_align">Duration Break</td>
+      <td class="center_align">Catch up time</td>
+    </tr>
+    <tr ng-repeat="catchUpTimeConfig in workSession.catchUpTimeConfig">
+      <td class="right_separator">
+        <div><duration-widget duration="catchUpTimeConfig.break" /></div>
+      </td>
+      <td>
+        <div><duration-widget duration="catchUpTimeConfig.catchUp" /></div>
+      </td>
+    </tr>
+  </table>
+
+</div>

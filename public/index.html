@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US" ng-app="app">
+
+<!--header-->
+<head>
+    <meta charset="utf-8">
+    <title>Time Management</title>
+    <link href='assets/css/bootstrap.min.css' rel="stylesheet" type="text/css">
+    <link href='assets/css/bootstrap-theme.css' rel="stylesheet" type="text/css">
+    <link href='assets/css/drop-theme-basic.css' rel="stylesheet" type="text/css">
+    <link href='assets/css/tether-theme-basic.css' rel="stylesheet" type="text/css">
+    <link href='assets/css/app.css' rel="stylesheet" type="text/css">
+</head>
+
+<!--body-->
+<body>
+    <div class="container">
+        <div class=" col-md-12">
+            <h1 class="div_50_perc"><img src="assets/img/logo.png" class="logo"" />Time Manager</h1>
+            <div class="div_50_perc" style="text-align: right"><auth-widget /></div>
+        </div>
+        <div ui-view class=" col-md-12 main_div">
+            
+        </div>
+    </div>
+</body>
+
+<!--Firebase Integration-->
+<script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyA85-r57zgtrrL-rvgvuml50VndO_n0QJA",
+    authDomain: "project-2000988605826771372.firebaseapp.com",
+    databaseURL: "https://project-2000988605826771372.firebaseio.com",
+    storageBucket: "project-2000988605826771372.appspot.com",
+  };
+  firebase.initializeApp(config);
+</script>
+
+<!-- Importing js libs -->
+<script src="assets/libs/jquery-1.11.3.min.js"></script>
+<script src="assets/libs/tether.min.js"></script>
+<script src="assets/libs/drop.min.js"></script>
+<script src="assets/libs/bootstrap.min.js"></script>
+<script src="assets/libs/angular.min.js"></script>
+<script src="assets/libs/angular-ui-router.min.js"></script>
+<script src="assets/libs/notify.min.js"></script>
+
+<!-- Importing AngularJS app artefacts -->
+<script src="app/app.module.js"></script>
+<script src="app/app.routes.js"></script>
+
+<!-- Directives -->
+<script src="app/shared/directives/auth-widget.js"></script>
+<script src="app/shared/auth_service/authService.js"></script>
+<script src="app/shared/directives/interruptions-widget.js"></script>
+<script src="app/shared/directives/breaks-widget.js"></script>
+<script src="app/shared/directives/objective-widget.js"></script>
+<script src="app/shared/directives/duration-widget.js"></script>
+<script src="app/shared/directives/worksession-config.js"></script>
+<script src="app/shared/directives/bind-config-popup.js"></script>
+
+<!-- Services -->
+<script src="app/shared/persistence_service/firebaseRealDBService.js"></script>
+<script src="app/shared/utils/customEvent.js"></script>
+<script src="app/shared/utils/reverseFilter.js"></script>
+<script src="app/shared/utils/utilService.js"></script>
+<script src="app/shared/speech_service/speechService.js"></script>
+<script src="app/shared/persistence_service/persistenceService.js"></script>
+<script src="app/components/dashboard/dashboardService.js"></script>
+<script src="app/components/work_session/workSessionService.js"></script>
+
+<!-- Controllers -->
+<script src="app/components/dashboard/dashboardController.js"></script>
+<script src="app/components/work_session/workSessionController.js"></script>
+
+</html>

@@ -1,0 +1,69 @@
+<div>
+    <!--New worksession button-->
+    <center><button ng-click="startNewWorkSession()" data-toggle="modal" data-target="#workSessionConfig" type="button" class="btn btn-lg btn-success"><span class="glyphicon glyphicon-star"></span> START NEW WORK SESSION</button></center>
+    <hr/>
+    
+    <!--Filters-->
+    <input ng-model="search.byCategoryOrName" type="text" placeholder="Search by category/name" class="text_input" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    From <input ng-model="search.byDateFrom" type="date" class="text_input" /> to <input ng-model="search.byDateTo" type="date"
+        class="text_input" /> {{}}
+    
+    <!--Table containing the list of worksessions-->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Session</th>
+                <th>Work Time</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="workSession in getSliceList()  track by $index">
+                <td>{{formatDate(workSession.dateTimeStart)}}</td>
+                <td><a ng-click="loadWorkSession(workSession)" href="">{{workSession.workSessionCategory}} / {{workSession.workSessionName}}</a></td>
+                <td>{{formatDuration(workSession.totalWorkTime + workSession.totalReflectionTime)}}</td>
+                <td><a class="delete_objective" ng-click="deleteWorkSession(workSession)" title="Delete">&times;</a></td>
+            </tr>
+        </tbody>
+    </table>
+    <div ng-show="loading"><center><img src="assets/img/loading.gif" /></center></div>
+    
+    <!--Pagination-->
+    <nav>
+        <ul class="pagination" style="margin-top: 0px">
+            <li ng-class="{'disabled':currentPage == 1}">
+                <a ng-click="previousPage()" href="" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li ng-repeat="page in getPages()" ng-class="{'active':page == currentPage}">
+                <a ng-click="selectPage(page)" href="">{{page}}</a>
+            </li>
+            <li ng-class="{'disabled':currentPage == getLastPage()}">
+                <a ng-click="nextPage()" href="" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!--Modal containing the configuration form for new worksession -->
+    <div id="workSessionConfig" class="modal fade modal_config" role="dialog">
+        <div class="panel panel-default">
+            <div class="panel-heading center_align"><span class="glyphicon glyphicon-th-list"></span> <b>Work session configuration</b></div>
+            <div class="panel-body">
+                <worksession-config work-session="workSessionConfig" />
+            </div>
+            <div class="panel-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        CANCEL</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="createNewWorkSession()">CREATE
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+            </div>
+        </div>
+
+    </div>
+</div>

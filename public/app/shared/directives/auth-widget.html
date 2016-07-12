@@ -1,0 +1,21 @@
+<div >
+    <!--Displays the login link when no user is authenticated-->
+    <div ng-if="userInfo==null">
+        <a href="" ng-click="login()">LOG IN WITH GOOGLE</a>
+    </div>
+    <!--Displays the user name, logo + link to logout, when a user is authenticated-->
+    <div ng-if="userInfo!=null">
+        <img class="float_right img-circle" ng-src="{{userInfo.photoURL}}" >
+        <div class="username_box">
+            <br>
+            <span >{{userInfo.displayName}}</span>
+           <br>
+            <a href="" ng-click="logout()">LOGOUT</a>
+        </div>
+    </div>    
+    <!--Displays an error message if the authentication failed -->
+    <div ng-if="error!=null">
+        The following error occured while login: <br>
+        {{error.errorMessage}}
+    </div>    
+</div>

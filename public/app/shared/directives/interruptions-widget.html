@@ -1,0 +1,15 @@
+<div>
+    <!--Title bar-->
+    <div  ng-click="showHide()" class="objective_title hand_cursor">
+        &nbsp;<span class="glyphicon glyphicon-exclamation-sign" />
+        Interruptions <span class="gray_badge" ng-show="interruptions.length>0">{{interruptions.length}}</span>
+    </div>
+    <!--Interruption details-->
+    <div ng-show="visible">
+        <!--Looping through the interruptions-->
+        <div ng-repeat="interruption in interruptions">
+            <span class="light_gray_badge">{{$index+1}}</span> {{formatDuration(interruption.timeSpent)}}   
+            <input ng-model="interruption.comment" class="text_editor" type="text" />
+        </div>
+    </div>
+</div>
